@@ -15,7 +15,7 @@ object ModelBuilder {
   def createRawW2V(sc: SparkContext): Unit = {
 
     println(s"creating or moving output folder '$OUTPUT_RAW_W2V'..")
-    Folder.moveAndCreate(OUTPUT_RAW_W2V)
+    Folder.moveIfExists(OUTPUT_RAW_W2V)
 
     println(s"reading raw corpus ..")
     // one document per line
