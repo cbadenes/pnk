@@ -1,0 +1,100 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 60px;
+    font-size: 1.6em;
+}
+
+.copyright {
+    color: #ffffff;
+}
+
+.footer {
+    text-align: center;
+}
+
+.footer a {
+    color: #ee4444;
+}
+
+.sidebar h1 {
+    color: #00008B;
+    font-size: 1.3em;
+}
+
+.sidebar a {
+    color: #00008B;
+}
+
+.sidebar li {
+    margin-top: .7em;
+    line-height: 1em;
+}
+
+.sidebar a:hover {
+    color: #3071a9;
+}
+
+.container-left {
+    margin: 0;
+}
+
+.well h1 {
+    color: #00008B;
+    font-size: 1.3em;
+}
+
+.author {
+    color: #ee4444;
+}
+
+.author a {
+    color: #ee4444;
+}
+
+
+#container {
+    margin: 0 auto;
+    width: 90%;
+}
+#accordion input {
+    display: none;
+}
+#accordion label {
+    background: #eee;
+    border-radius: .25em;
+    cursor: pointer;
+    display: block;
+    margin-bottom: .125em;
+    padding: .25em 1em;
+    z-index: 20;
+    font-size: 17px;
+}
+#accordion label:hover {
+    background: #ccc;
+}
+
+#accordion input:checked + label {
+    background: #ccc;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    color: white;
+    margin-bottom: 0;
+}
+#accordion article {
+    background: #f7f7f7;
+    height:0px;
+    overflow:hidden;
+    z-index:10;
+}
+#accordion article p {
+    padding: 1em;
+}
+#accordion input:checked article {
+}
+#accordion input:checked ~ article {
+    border-bottom-left-radius: .25em;
+    border-bottom-right-radius: .25em;
+    height: auto;
+    margin-bottom: .125em;
+}
+.highlight { background-color: yellow }
