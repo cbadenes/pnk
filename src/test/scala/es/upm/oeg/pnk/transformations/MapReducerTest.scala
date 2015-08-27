@@ -27,5 +27,44 @@ class MapReducerTest extends FunSuite {
   }
 
 
+  test("Cycle") {
+
+    val input     : Map[String,String] = Map("A" -> "B", "B" -> "C","C" -> "D", "D" -> "A")
+    val expected  : Map[String,String] = Map("B" -> "A", "C" -> "A","D" -> "A")
+    val obtained = MapReducer(input)
+
+    println(s"Input: " + input)
+    println(s"Expected: " + expected)
+    println(s"Obtained: " + obtained)
+
+    assert(expected.equals(obtained))
+  }
+
+  test("Cycle and others") {
+
+    val input     : Map[String,String] = Map("A" -> "B", "B" -> "C","C" -> "D", "D" -> "A", "G" -> "H", "I" -> "J")
+    val expected  : Map[String,String] = Map("B" -> "A", "C" -> "A","D" -> "A", "G" -> "H", "I" -> "J")
+    val obtained = MapReducer(input)
+
+    println(s"Input: " + input)
+    println(s"Expected: " + expected)
+    println(s"Obtained: " + obtained)
+
+    assert(expected.equals(obtained))
+  }
+
+  test("Two Cycle") {
+
+    val input     : Map[String,String] = Map("A" -> "B", "B" -> "C","C" -> "D", "D" -> "A", "E" -> "F", "F" -> "G", "G" -> "E")
+    val expected  : Map[String,String] = Map("B" -> "A", "C" -> "A","D" -> "A", "E" -> "G", "F" -> "G" )
+    val obtained = MapReducer(input)
+
+    println(s"Input: " + input)
+    println(s"Expected: " + expected)
+    println(s"Obtained: " + obtained)
+
+    assert(expected.equals(obtained))
+  }
+
 
 }

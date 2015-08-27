@@ -1,6 +1,7 @@
 package es.upm.oeg.pnk.transformations
 
 import scala.collection.Map
+import util.control.Breaks._
 
 /**
  * Created by cbadenes on 08/08/15.
@@ -14,10 +15,18 @@ object MapReducer {
       linked = false
       val keys = table.keys
       keys.foreach{ key =>
-        val value = table.get(key).get
-        if (table.contains(value)){
-          linked = true
-          table += key -> table.get(value).get
+        breakable {
+          if (!table.contains(key)) break
+          val value = table.get(key).get
+          if (table.contains(value)){
+            val linkedValue = table.get(value).get
+            if (value.equals(linkedValue)){
+              table = table - value
+            } else{
+              linked = true
+              table += key -> table.get(value).get
+            }
+          }
         }
       }
     }
