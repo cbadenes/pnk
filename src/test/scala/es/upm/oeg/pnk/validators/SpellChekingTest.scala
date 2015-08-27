@@ -43,6 +43,8 @@ class SpellChekingTest extends FunSuite {
       println("Spell Validation of 'Madrigal'")
       assert(SpellValidator.isValid("Madrigal"))
 
+      assert(!SpellValidator.isValid("Marjaliza"))
+
   }
 
   test("Spell Check Places") {
