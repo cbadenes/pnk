@@ -1,12 +1,10 @@
 package es.upm.oeg.pnk.actions
 
 import es.upm.oeg.pnk.data.Replacement
-import es.upm.oeg.pnk.transformations.{MapReducer, Folder}
+import es.upm.oeg.pnk.transformations.{Folder, MapReducer}
 import es.upm.oeg.pnk.validators.{SpellValidator, WordValidator}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.feature.Word2VecModel
-
-import scala.collection.Map
 
 /**
  * Created by cbadenes on 05/08/15.
