@@ -13,6 +13,7 @@ object Cleaner {
       replace("\f","").
       replace("("," , ").
       replace(")"," , ").
+      replace("-"," ").
       split("\n").
       map{case line=>
         if (line.length == 0) "."
