@@ -40,8 +40,8 @@ object SimilarWordsExample {
     println("##Synonyms of Mapjaliza")
     w2vModel.findSynonyms("Mapjaliza",20).foreach(println(_))
 
-    println("##Synonyms of Marjaliza")
-    w2vModel.findSynonyms("Marjaliza",20).foreach(println(_))
+    println("##Synonyms of legitimamente")
+    w2vModel.findSynonyms("legitimamente",50).foreach(println(_))
 
   }
 
