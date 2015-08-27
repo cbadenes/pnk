@@ -1,10 +1,12 @@
 package es.upm.oeg.pnk.actions
 
 import es.upm.oeg.pnk.data.Replacement
-import es.upm.oeg.pnk.transformations.Folder
+import es.upm.oeg.pnk.transformations.{MapReducer, Folder}
 import es.upm.oeg.pnk.validators.{SpellValidator, WordValidator}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.feature.Word2VecModel
+
+import scala.collection.Map
 
 /**
  * Created by cbadenes on 05/08/15.
@@ -66,20 +68,29 @@ object ReplacementsBuilder {
     println(s"creating or moving output folder '$OUTPUT_ANALYSIS'..")
     Folder.moveIfExists(OUTPUT_ANALYSIS)
 
-    println(s"loading replacement text..")
-    val input  = sc.wholeTextFiles(ReplacementsBuilder.OUTPUT_IDENTIFICATION).filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
+    println(s"analyzing replacements ..")
+    sc.wholeTextFiles(ReplacementsBuilder.OUTPUT_IDENTIFICATION).filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).
       flatMap(_.split("\n")).
       map(new Replacement(_)).
-      filter(!_.sameWord)
-
-    println(s"detecting duplicated replacements ..")
-    input.
-      map(x=>(x.token,x)).
-      groupByKey.
-      filter(x=>x._2.size>1).
-      flatMap(_._2).
-      map(_.toString).
+      filter(!_.sameWord).
+      filter(_.areBothValids).
+      filter(!_.areBothCorrectlySpelled).
+      map{case r=>
+        // based on spelling
+        if (r.isTokenCorrectlySpelled && !r.isSimilarWordCorrectlySpelled){
+          r.change
+        }else if (!r.isTokenCorrectlySpelled && r.isSimilarWordCorrectlySpelled){
+          r
+        }else{
+          // based on frequencies
+          if (r.tokenFreq > r.similarFreq){
+            r.change
+          }else{
+            r
+          }
+        }
+      }.
       saveAsTextFile(OUTPUT_ANALYSIS)
 
   }
@@ -90,31 +101,21 @@ object ReplacementsBuilder {
     println(s"creating or moving output folder '$OUTPUT_FIXED'..")
     Folder.moveIfExists(OUTPUT_FIXED)
 
-    println(s"loading replacement text..")
-    val input  = sc.wholeTextFiles(ReplacementsBuilder.OUTPUT_IDENTIFICATION).filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
+    val input = sc.wholeTextFiles(ReplacementsBuilder.OUTPUT_ANALYSIS).filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).
       flatMap(_.split("\n")).
       map(new Replacement(_)).
-      filter(!_.sameWord).
-      filter(x=> WordValidator.isValid(x.token) && WordValidator.isValid(x.similar)).
-      filter(x=> !SpellValidator.isValid(x.token)).
-      map{case x=>
-      try{
-        val increment     = if (x.spell) 100 else 0
-        val fitness       = x.w2vMeasure + x.smithWatermanMeasure + x.jaroWinklerMeasure + increment
+      filter(_.accuracy>0.7).           // has minimum accuracy?
+      map(x=>(x.token,x)).
+      reduceByKey((r1,r2) => if (r1.accuracy > r2.accuracy) r1 else r2).map(_._2).cache
 
-        (x.token,(x.similar,fitness))
-      }catch {
-        case e:Exception =>
-          println("ERROR: " + x.toString)
-          (x.token,(x.similar.toString,0.0))
-      }
-    }
+    println(s"resolving replacement cycles ..")
+    val replacements = MapReducer(input.map(x=>(x.token,x.similar)).collectAsMap)
 
-    println(s"fixing replacements ..")
+
+    println(s"fixing analyzed replacements ..")
     input.
-      reduceByKey{case (x,y) => if (x._2 > y._2) x else y}.
-      map(x=> new Replacement(x._1,x._2._1).toString).
+      map(x=>x.newSimilar(replacements.getOrElse(x.similar,x.similar))).
       saveAsTextFile(OUTPUT_FIXED)
 
   }
