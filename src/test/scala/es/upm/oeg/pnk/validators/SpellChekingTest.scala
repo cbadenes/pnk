@@ -42,7 +42,7 @@ class SpellChekingTest extends FunSuite {
 
       println("Spell Validation of 'Madrigal'")
       assert(SpellValidator.isValid("Madrigal"))
-    
+
   }
 
   test("Spell Check Places") {
