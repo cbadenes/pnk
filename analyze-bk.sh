@@ -1,2 +1,3 @@
 #!/bin/bash
-./analyze.sh > analyze.log 2>&1 &
+now=$(date +"%F-%T")
+./analyze.sh > analyze-$now.log 2>&1 &
