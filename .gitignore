@@ -7,6 +7,9 @@
 #Maven
 target/
 
+#Analysis
+output/
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
