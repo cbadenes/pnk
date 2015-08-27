@@ -14,7 +14,7 @@ object ReplacementAnalysisExample {
     val conf = new SparkConf().
       setMaster("local[4]").
       setAppName("Local Spark Example").
-      set("spark.executor.memory", "8g").
+      set("spark.executor.memory", "12g").
       set("spark.driver.maxResultSize", "4g")
     val sc = new SparkContext(conf)
 
