@@ -11,8 +11,6 @@ import org.apache.spark.mllib.feature.Word2VecModel
  */
 object ReplacementsBuilder {
 
-  val INPUT_FILES             = "part-00"
-
   def identify(sc: SparkContext, corpusInput: String, w2vInput: String, output: String): Unit = {
 
     println(s"creating or moving output folder '$output'..")
@@ -22,7 +20,7 @@ object ReplacementsBuilder {
     // one document per line
     val documents = sc.
       wholeTextFiles(corpusInput).
-      filter(_._1.contains(INPUT_FILES)).
+      filter(_._1.contains("part-00")).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).map(_.replace("\n","")).filter(!_.isEmpty)
 
@@ -36,19 +34,9 @@ object ReplacementsBuilder {
     val wordsCounter  = words.map(word => (word, 1)).reduceByKey((a, b) => a + b).cache
     val counter       = wordsCounter.collectAsMap
 
-    var analyzed : List[String] = List.empty[String]
-
     println(s"detecting similar words ..")
     wordsCounter.flatMap { case (word,counts) =>
-      if (!analyzed.contains(word)) {
-        analyzed = word :: analyzed
-        val synonyms : List[(String,(Double,Double,Double))] = SimilarityFinder.recursive(w2vModel,word)
-        if (!synonyms.isEmpty) {
-          synonyms.map{case x=>
-            new Replacement(word,x._1,x._2._1,x._2._2,x._2._3,SpellValidator.isValid(x._1),counter.getOrElse(word,0).toInt,counter.getOrElse(x._1,0).toInt).toString
-          }
-        }else{List.empty}
-      }else{List.empty}
+      SimilarityFinder.recursive(w2vModel,word).map(x=>Replacement(word,x._1,x._2._1,x._2._2,x._2._3,SpellValidator.isValid(x._1),counts,counter.getOrElse(x._1,0).toInt))
     }.saveAsTextFile(output)
   }
 
@@ -60,7 +48,7 @@ object ReplacementsBuilder {
     Folder.moveIfExists(output)
 
     println(s"analyzing and fixing replacements from: $input to create: $output..")
-    sc.wholeTextFiles(input).filter(_._1.contains(INPUT_FILES)).
+    sc.wholeTextFiles(input).filter(_._1.contains("part-00")).
       map(_._2).
       flatMap(_.split("\n")).
       map(new Replacement(_)).
@@ -92,7 +80,7 @@ object ReplacementsBuilder {
     println(s"creating or moving output folder '$output'..")
     Folder.moveIfExists(output)
 
-    val documents = sc.wholeTextFiles(input).filter(_._1.contains(INPUT_FILES)).
+    val documents = sc.wholeTextFiles(input).filter(_._1.contains("part-00")).
       map(_._2).
       flatMap(_.split("\n")).
       map(new Replacement(_)).

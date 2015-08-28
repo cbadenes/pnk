@@ -20,7 +20,7 @@ object EntityRecognizer {
     // one document per line
     sc.
       wholeTextFiles(input).
-      filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
+      filter(_._1.contains("part-00")).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).
       map(_.replace("\n","")).
