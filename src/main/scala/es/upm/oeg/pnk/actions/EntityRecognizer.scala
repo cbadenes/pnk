@@ -10,24 +10,23 @@ import org.apache.spark.mllib.feature.Word2Vec
  */
 object EntityRecognizer {
 
-  val OUTPUT_RAW = "output/entities/raw"
 
-  def identifyEntities(sc: SparkContext): Unit = {
+  def identify(sc: SparkContext, input: String, output: String): Unit = {
 
-    println(s"creating or moving output folder '$OUTPUT_RAW'..")
-    Folder.moveIfExists(OUTPUT_RAW)
+    println(s"creating or moving output folder '$output'..")
+    Folder.moveIfExists(output)
 
-    println(s"identifying entities from replaced corpus ..")
+    println(s"identifying entities from corpus: $input ..")
     // one document per line
     sc.
-      wholeTextFiles(CorpusBuilder.OUTPUT_REPLACED).
+      wholeTextFiles(input).
       filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).
       map(_.replace("\n","")).
       filter(!_.isEmpty).
       flatMap(line => Classifier(line)).
-      saveAsTextFile(OUTPUT_RAW)
+      saveAsTextFile(output)
 
   }
   

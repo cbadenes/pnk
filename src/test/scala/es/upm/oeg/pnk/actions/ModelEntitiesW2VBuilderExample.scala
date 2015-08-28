@@ -1,5 +1,6 @@
 package es.upm.oeg.pnk.actions
 
+import es.upm.oeg.pnk.Analyze
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -20,8 +21,7 @@ object ModelEntitiesW2VBuilderExample {
 
     Logger.getRootLogger.setLevel(Level.WARN)
 
-    // Create an initial w2v model from raw text
-    ModelBuilder.createEntitiesW2V(sc)
+    ModelBuilder.createW2V(sc,Analyze.corpus_tagged,Analyze.w2v_ent)
 
   }
 

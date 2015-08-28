@@ -1,5 +1,6 @@
 package es.upm.oeg.pnk.actions
 
+import es.upm.oeg.pnk.Analyze
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.feature.Word2VecModel
 import org.apache.spark.{SparkConf, SparkContext}
@@ -22,7 +23,7 @@ object SimilarWordsFromEntitiesExample {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     println(s"loading word2vec model to detect similar words..")
-    val w2vModel    = Word2VecModel.load(sc, ModelBuilder.OUTPUT_ENTITIES_W2V)
+    val w2vModel    = Word2VecModel.load(sc, Analyze.w2v_ent)
 
 //    val input = List("Marjaliza","David")
 //

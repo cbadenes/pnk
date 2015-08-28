@@ -12,40 +12,28 @@ import org.apache.spark.rdd.RDD
  */
 object CorpusBuilder {
 
-  val INPUT_FOLDER    = "corpus/filtrala.org/punica/tomo*/"
+  def create(sc: SparkContext, input: String, output: String): Unit = {
 
-  val OUTPUT_RAW      = "output/corpus/raw"
-
-  val OUTPUT_REPLACED = "output/corpus/replaced"
-
-  val OUTPUT_ENTITIES = "output/corpus/entities"
-
-  def createRaw(sc: SparkContext): Unit = {
-
-    println(s"creating or moving output folder '$OUTPUT_RAW'..")
-    Folder.moveIfExists(OUTPUT_RAW)
-
-    println(s"reading documents..")
-    val input   : RDD[(String, String)]  = sc.
-      wholeTextFiles(INPUT_FOLDER).
-      filter((x) => x._1.endsWith("index.html"))
+    println(s"creating or moving output folder '$output'..")
+    Folder.moveIfExists(output)
 
     println(s"extracting text from documents..")
-    val texts  : RDD[(String, String)]  = Parser(input)
+    val texts  : RDD[(String, String)]  = Parser(sc.
+      wholeTextFiles(input).
+      filter((x) => x._1.endsWith("index.html")))
 
-    // save output
-    texts.saveAsTextFile(OUTPUT_RAW)
+    texts.saveAsTextFile(output)
 
   }
 
-  def makeReplacements(sc: SparkContext): Unit = {
+  def replace(sc: SparkContext, corpusInput: String, replacementsInput: String, output: String): Unit = {
 
-    println(s"creating or moving output folder '$OUTPUT_REPLACED'..")
-    Folder.moveIfExists(OUTPUT_REPLACED)
+    println(s"creating or moving output folder '$output'..")
+    Folder.moveIfExists(output)
 
-    println(s"reading replacements ..")
+    println(s"reading replacements from: $replacementsInput..")
     val replacements  = sc.
-      wholeTextFiles(ReplacementsBuilder.OUTPUT_FIXED).
+      wholeTextFiles(replacementsInput).
       filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).
       flatMap(line=>line.split("\n")).
@@ -53,10 +41,10 @@ object CorpusBuilder {
       map(r=>(r.token,r.similar)).
       collectAsMap
 
-    println(s"reading raw corpus ..")
+    println(s"reading corpus from: $corpusInput..")
     // one document per line
     val input : RDD[String] = sc.
-      wholeTextFiles(CorpusBuilder.OUTPUT_RAW).
+      wholeTextFiles(corpusInput).
       filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).cache
 
@@ -70,27 +58,27 @@ object CorpusBuilder {
       map(line => line.split(" ").filter(WordValidator.isMinimal).map(word=>replacements.getOrElse(word,word))).
       map(x=>x mkString(" "))
 
-    println(s"replacing raw corpus ..")
-    files zip words saveAsTextFile(OUTPUT_REPLACED)
+    println(s"replacing corpus to: $output..")
+    files zip words saveAsTextFile(output)
 
   }
 
-  def setEntities(sc: SparkContext): Unit = {
+  def tag (sc: SparkContext, input: String, output: String): Unit = {
 
-    println(s"creating or moving output folder '$OUTPUT_ENTITIES'..")
-    Folder.moveIfExists(OUTPUT_ENTITIES)
+    println(s"creating or moving output folder '$output'..")
+    Folder.moveIfExists(output)
 
-    println(s"identifying entities from replaced corpus ..")
+    println(s"identifying and setting entities from corpus: $input to create the new corpus: $output..")
     // one document per line
     sc.
-      wholeTextFiles(CorpusBuilder.OUTPUT_REPLACED).
+      wholeTextFiles(input).
       filter(_._1.contains(ReplacementsBuilder.INPUT_FILES)).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).
       map(_.replace("\n","")).
       filter(!_.isEmpty).
       flatMap(line => Classifier.findAndReplace(line)).
-      saveAsTextFile(OUTPUT_ENTITIES)
+      saveAsTextFile(output)
 
 
 

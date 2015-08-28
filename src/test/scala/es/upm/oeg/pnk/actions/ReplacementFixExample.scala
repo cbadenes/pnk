@@ -1,5 +1,6 @@
 package es.upm.oeg.pnk.actions
 
+import es.upm.oeg.pnk.Analyze
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -20,8 +21,7 @@ object ReplacementFixExample {
 
     Logger.getRootLogger.setLevel(Level.WARN)
 
-    // Detect similar words
-    ReplacementsBuilder.fix(sc)
+    ReplacementsBuilder.selection(sc,Analyze.repl_raw_fix,Analyze.repl_raw_sel)
 
   }
 

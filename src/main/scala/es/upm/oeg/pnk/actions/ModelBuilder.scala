@@ -10,57 +10,28 @@ import org.apache.spark.mllib.feature.Word2Vec
  */
 object ModelBuilder {
 
-  val OUTPUT_RAW_W2V = "output/model/w2v-raw"
+  def createW2V(sc: SparkContext, input: String, output: String): Unit = {
 
-  val OUTPUT_ENTITIES_W2V = "output/model/w2v-entities"
+    println(s"creating or moving output folder '$output'..")
+    Folder.moveIfExists(output)
 
-  def createRawW2V(sc: SparkContext): Unit = {
-
-    println(s"creating or moving output folder '$OUTPUT_RAW_W2V'..")
-    Folder.moveIfExists(OUTPUT_RAW_W2V)
-
-    println(s"reading raw corpus ..")
+    println(s"reading corpus from $input..")
     // one document per line
     val documents = sc.
-      wholeTextFiles(CorpusBuilder.OUTPUT_RAW).
+      wholeTextFiles(input).
       filter(_._1.contains("part-00")).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).map(_.replace("\n","")).filter(!_.isEmpty)
 
-    println(s"creating word2vec model from raw corpus..")
+    println(s"creating word2vec model in: $output..")
     val w2vAux = new Word2Vec()
     w2vAux.setVectorSize(500) // vector dimension (default 100)
     val corpus = documents.map(line=>line.split(" ").filter(WordValidator.isRelevant).toSeq)
     val w2vSimModel = w2vAux.fit(corpus)
 
     // save output
-    w2vSimModel.save(sc,OUTPUT_RAW_W2V)
+    w2vSimModel.save(sc,output)
 
   }
-
-  def createEntitiesW2V(sc: SparkContext): Unit = {
-
-    println(s"creating or moving output folder '$OUTPUT_ENTITIES_W2V'..")
-    Folder.moveIfExists(OUTPUT_ENTITIES_W2V)
-
-    println(s"reading corpus with entities..")
-    // one document per line
-    val documents = sc.
-      wholeTextFiles(CorpusBuilder.OUTPUT_ENTITIES).
-      filter(_._1.contains("part-00")).
-      map(_._2).
-      flatMap(line=>line.split("\\(file:.*/index.html,")).map(_.replace("\n","")).filter(!_.isEmpty)
-
-    println(s"creating word2vec model from corpus with entities..")
-    val w2vAux = new Word2Vec()
-    w2vAux.setVectorSize(500) // vector dimension (default 100)
-    val corpus = documents.map(line=>line.split(" ").filter(WordValidator.isRelevant).toSeq)
-    val w2vSimModel = w2vAux.fit(corpus)
-
-    // save output
-    w2vSimModel.save(sc,OUTPUT_ENTITIES_W2V)
-
-  }
-  
 
 }

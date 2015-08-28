@@ -1,5 +1,6 @@
 package es.upm.oeg.pnk.actions
 
+import es.upm.oeg.pnk.Analyze
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.mllib.feature.Word2VecModel
 import org.apache.spark.{SparkConf, SparkContext}
@@ -21,8 +22,7 @@ object CorpusRawBuilderExample {
 
     Logger.getRootLogger.setLevel(Level.WARN)
 
-    // Extract txt from html
-    CorpusBuilder.createRaw(sc)
+    CorpusBuilder.create(sc,Analyze.corpus,Analyze.corpus_txt)
 
   }
 
