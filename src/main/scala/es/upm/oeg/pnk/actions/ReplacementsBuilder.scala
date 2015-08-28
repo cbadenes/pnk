@@ -29,7 +29,7 @@ object ReplacementsBuilder {
     // one document per line
     val documents = sc.
       wholeTextFiles(CorpusBuilder.OUTPUT_RAW).
-      filter(_._1.contains("part-00")).
+      filter(_._1.contains(INPUT_FILES)).
       map(_._2).
       flatMap(line=>line.split("\\(file:.*/index.html,")).map(_.replace("\n","")).filter(!_.isEmpty)
 

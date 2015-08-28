@@ -40,6 +40,10 @@ object Analyze {
     // Create a new corpus with replacements
     CorpusBuilder.makeReplacements(sc)
 
+    // Identify entities
+    EntityRecognizer.identifyEntities(sc)
+
+
   }
 
 }

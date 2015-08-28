@@ -9,24 +9,20 @@ import org.scalatest.junit.JUnitRunner
  * Created by cbadenes on 08/08/15.
  */
 @RunWith(classOf[JUnitRunner])
-class EntityRecognizerTest extends FunSuite {
+class ClassifierTest extends FunSuite {
 
 
   test("Entity Recognize text") {
-
-
     val input   : String  = "w . Juzgado Central Instruccion . Fecha . : . Of.Reg! Rep Dos.Cent. Instruccion . Hora . Madrid , Madrid , . Usuario Pet: . ju7500 . Penal . Usuarlo Reg: . ju7500"
     val expected  : String  = ""
-    val obtained  : Map[String, List[(String,Integer,Integer)]]  = EntityRecognizer(input)
+    val obtained  : List[(String, String, Integer, Integer)]  = Classifier(input)
 
 
     println(s"Input: " + input)
     println(s"Expected: " + expected)
     println(s"Obtained: ")
-    obtained.keys.foreach { case key =>
-      println(s"$key=>")
-      val entities = obtained.getOrElse(key, List.empty)
-      entities.foreach(entity=>println(s"- [$entity]"))
+    obtained.foreach { case entity =>
+      println(s"$entity")
     }
   }
 }

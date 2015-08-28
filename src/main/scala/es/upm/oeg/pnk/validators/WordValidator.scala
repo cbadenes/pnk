@@ -13,6 +13,11 @@ object WordValidator {
     !word.isEmpty && word.forall(x=>isEncoded("UTF-8",x)) && word.exists(_.isLetter)
   }
 
+  def isMinimal (word: String): Boolean ={
+    !word.isEmpty && word.forall(x=>isEncoded("UTF-8",x)) && (word.exists(_.isLetter) || (word.length == 1 && ( word.equals(".") || word.equals(","))))
+  }
+
+
   def isRelevant (word: String): Boolean ={
     isValid(word) && !isStopWord(word) && hasMinimumSize(word)
   }
