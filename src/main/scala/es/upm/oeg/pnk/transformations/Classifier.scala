@@ -20,4 +20,21 @@ object Classifier {
     annotatedContent.map(triple=>(triple.first,text.substring(triple.second(),triple.third()),triple.second,triple.third)).toList
   }
 
+  def findAndReplace (text: String): String = {
+
+    val annotatedContent  : mutable.Buffer[Triple[String, Integer, Integer]]  = JavaConversions.asScalaBuffer(classifier.classifyToCharacterOffsets(text))
+
+    annotatedContent.map(triple=>(triple.first,text.substring(triple.second(),triple.third()),triple.second,triple.third)).toList
+
+    var modifiedText = new StringBuffer(text)
+
+    annotatedContent.foreach{ case triple=>
+        val start   = triple.second
+        val end     = triple.third
+        val entity  = text.substring(start,end).replace(" ","_")
+        modifiedText = modifiedText.replace(start,end,entity)
+    }
+    return modifiedText.toString
+  }
+
 }

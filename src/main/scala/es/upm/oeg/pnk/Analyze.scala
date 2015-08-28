@@ -43,6 +43,11 @@ object Analyze {
     // Identify entities
     EntityRecognizer.identifyEntities(sc)
 
+    // Update corpus with entities
+    CorpusBuilder.setEntities(sc)
+
+    // Create a w2v model using this corpus
+    ModelBuilder.createEntitiesW2V(sc)
 
   }
 
