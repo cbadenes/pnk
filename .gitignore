@@ -6,9 +6,13 @@
 
 #Maven
 target/
+corpus/
+entities/
+output/
+output.zip
 
 #Analysis
-output/
+output-backup/
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
