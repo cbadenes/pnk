@@ -7,7 +7,6 @@
 #Maven
 target/
 corpus/
-entities/
 output/
 output.zip
 
