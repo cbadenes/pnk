@@ -26,7 +26,7 @@ object GraphEmpresas {
     println(s"loading word2vec model to detect similar words..")
     val w2vModel : Word2VecModel    = Word2VecModel.load(sc, Analyze.w2v_optimized)
 
-    val input: RDD[(String, Long)] = sc.textFile("entities/empresas.txt").zipWithIndex.cache
+    val input: RDD[(String, Long)] = sc.textFile("src/main/resources/entities/empresas.txt").zipWithIndex.cache
 
     val json = GraphBuilder(w2vModel,input)
 
