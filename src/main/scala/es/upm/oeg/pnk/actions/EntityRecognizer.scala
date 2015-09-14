@@ -29,6 +29,30 @@ object EntityRecognizer {
       saveAsTextFile(output)
 
   }
+
+  def distinct(sc: SparkContext, input: String, output: String, byType: String): Unit = {
+
+    val outputFolder = output+"-"+byType
+
+    println(s"creating or moving output folder '$outputFolder'..")
+    Folder.moveIfExists(outputFolder)
+
+    println(s"reading entities from: $input ..")
+    // one document per line
+    sc.
+      textFile(input+"/part-00000").
+      map(x=>x.split(",")).
+      filter(x=>x(0).contains(byType)).
+      map(x=>(x(1),1)).
+      reduceByKey((x,y)=>x+y).
+      filter(x=>x._1.length >3 && x._2>10).
+      sortByKey(true).
+      map(_._1).
+      saveAsTextFile(outputFolder)
+
+  }
+
+
   
 
 }

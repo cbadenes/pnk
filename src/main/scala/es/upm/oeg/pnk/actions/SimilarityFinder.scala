@@ -9,9 +9,9 @@ import org.simmetrics.StringMetrics
  */
 object SimilarityFinder {
 
-  val WORD2VEC_THRESOLD       = 0.5 //0.6
-  val SMITH_WATERMAN_THRESOLD = 0.6 //0.7
-  val JARO_WINKLER_THRESOLD   = 0.7 //0.9
+  val WORD2VEC_THRESOLD       = 0.6 //0.5,0.6
+  val SMITH_WATERMAN_THRESOLD = 0.7 //0.6,0.7
+  val JARO_WINKLER_THRESOLD   = 0.9 //0.7,0.9
 
   val SMITH_WATERMAN_RECURSIVE_THRESOLD = 0.7 //0.7
   val JARO_WINKLER_RECURSIVE_THRESOLD   = 0.9 //0.9

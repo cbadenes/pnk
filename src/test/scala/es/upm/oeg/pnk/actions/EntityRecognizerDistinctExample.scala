@@ -7,7 +7,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 /**
  * Created by cbadenes on 04/08/15.
  */
-object EntityRecognizerExample {
+object EntityRecognizerDistinctExample {
 
   def main(args: Array[String]): Unit = {
 
@@ -22,7 +22,10 @@ object EntityRecognizerExample {
     Logger.getRootLogger.setLevel(Level.WARN)
 
     // Extract txt from html
-    EntityRecognizer.identify(sc,Analyze.corpus_fixed,Analyze.entities_raw)
+    EntityRecognizer.distinct(sc,"output/entities/raw","output/entities/distinct/personas","PERS")
+    EntityRecognizer.distinct(sc,"output/entities/raw","output/entities/distinct/lugares","LUG")
+    EntityRecognizer.distinct(sc,"output/entities/raw","output/entities/distinct/organizaciones","ORG")
+    EntityRecognizer.distinct(sc,"output/entities/raw","output/entities/distinct/otros","OTROS")
 
   }
 

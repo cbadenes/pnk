@@ -73,12 +73,22 @@ object CorpusBuilder {
     sc.
       wholeTextFiles(input).
       filter(_._1.contains("part-00")).
-      map(_._2).
-      flatMap(line=>line.split("\\(file:.*/index.html,")).
-      map(_.replace("\n","")).
-      filter(!_.isEmpty).
-      flatMap(line => Classifier.findAndReplace(line)).
+      flatMap(_._2.split("\n")).
+      map(line=>line.split("/index.html,")).
+      map(x=>(x(0),Classifier.findAndReplace(x(1)))).
+      map(x=>x._1+"/index.html,"+x._2).
       saveAsTextFile(output)
+
+//
+//    sc.
+//      wholeTextFiles(input).
+//      filter(_._1.contains("part-00")).
+//      map(_._2).
+//      flatMap(line=>line.split("\\(file:.*/index.html,")).
+//      map(_.replace("\n","")).
+//      filter(!_.isEmpty).
+//      map(line => Classifier.findAndReplace(line)).
+//      saveAsTextFile(output)
 
 
 

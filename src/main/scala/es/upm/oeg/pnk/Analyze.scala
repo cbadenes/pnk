@@ -20,6 +20,10 @@ object Analyze {
   val w2v_ent             = "output/model/w2v/entities"
   val w2v_optimized       = "output/model/w2v/optimized"
 
+  val topic_raw           = "output/model/topic/raw"
+  val topic_ent           = "output/model/topic/entities"
+  val topic_optimized     = "output/model/topic/optimized"
+
   val repl_raw            = "output/replacements/raw/identification"
   val repl_raw_fix        = "output/replacements/raw/fix"
   val repl_raw_sel        = "output/replacements/raw/selection"
@@ -44,51 +48,67 @@ object Analyze {
 
     Logger.getRootLogger.setLevel(Level.WARN)
 
-    // Extract txt from html
-    CorpusBuilder.create(sc,corpus,corpus_txt)
+//    // Extract txt from html
+//    CorpusBuilder.create(sc,corpus,corpus_txt)
+//
+//    // Create an initial w2v model from raw text
+//    ModelBuilder.createW2V(sc,corpus_txt,w2v_raw)
+//
+//    // Detect similar words
+//    ReplacementsBuilder.identify(sc,corpus_txt, w2v_raw, repl_raw)
+//
+//    // Fix duplicated and invalid replacements
+//    ReplacementsBuilder.fix(sc,repl_raw,repl_raw_fix)
+//
+//    // Fix replacements
+//    ReplacementsBuilder.selection(sc,repl_raw_fix,repl_raw_sel)
+//
+//    // Create a new corpus with replacements
+//    CorpusBuilder.replace(sc,corpus_txt,repl_raw_sel,corpus_fixed)
+//
+//    // Identify entities
+//    EntityRecognizer.identify(sc,corpus_fixed,entities_raw)
 
-    // Create an initial w2v model from raw text
-    ModelBuilder.createW2V(sc,corpus_txt,w2v_raw)
-
-    // Detect similar words
-    ReplacementsBuilder.identify(sc,corpus_txt, w2v_raw, repl_raw)
-
-    // Fix duplicated and invalid replacements
-    ReplacementsBuilder.fix(sc,repl_raw,repl_raw_fix)
-
-    // Fix replacements
-    ReplacementsBuilder.selection(sc,repl_raw_fix,repl_raw_sel)
-
-    // Create a new corpus with replacements
-    CorpusBuilder.replace(sc,corpus_txt,repl_raw_sel,corpus_fixed)
+//    EntityRecognizer.distinct(sc,entities_raw,entities_raw,"PERS")
+//    EntityRecognizer.distinct(sc,entities_raw,entities_raw,"ORG")
+//    EntityRecognizer.distinct(sc,entities_raw,entities_raw,"LUG")
+//    EntityRecognizer.distinct(sc,entities_raw,entities_raw,"OTROS")
+//
+//    // Update corpus with entities
+//    CorpusBuilder.tag(sc,corpus_fixed,corpus_tagged)
+//
+//    // Create a w2v model using this corpus
+//    ModelBuilder.createW2V(sc,corpus_tagged,w2v_ent)
+//
+//    // -> Second Iteration
+//    //Detect similar words using entities
+//    ReplacementsBuilder.identify(sc, corpus_tagged, w2v_ent, repl_ent)
+//
+//    // Fix duplicated and invalid replacements
+//    ReplacementsBuilder.fix(sc,repl_ent,repl_ent_fix)
+//
+//    // Fix replacements
+//    ReplacementsBuilder.selection(sc,repl_ent_fix,repl_ent_sel)
+//
+//    // Create a new corpus with these replacements
+//    CorpusBuilder.replace(sc,corpus_tagged,repl_ent_sel,corpus_optimized)
+//
+//    // Identify entities
+//    EntityRecognizer.identify(sc,corpus_optimized,entities_optimized)
 
     // Identify entities
-    EntityRecognizer.identify(sc,corpus_fixed,entities_raw)
 
-    // Update corpus with entities
-    CorpusBuilder.tag(sc,corpus_fixed,corpus_tagged)
+//    EntityRecognizer.distinct(sc,entities_optimized,entities_optimized,"PERS")
+//    EntityRecognizer.distinct(sc,entities_optimized,entities_optimized,"ORG")
+//    EntityRecognizer.distinct(sc,entities_optimized,entities_optimized,"LUG")
+//    EntityRecognizer.distinct(sc,entities_optimized,entities_optimized,"OTROS")
 
-    // Create a w2v model using this corpus
-    ModelBuilder.createW2V(sc,corpus_tagged,w2v_ent)
+//    // Create a w2v model using this corpus
+//    ModelBuilder.createW2V(sc,corpus_optimized,w2v_optimized)
+//
+//    // Create a topic model
+    ModelBuilder.createTopics(sc,corpus_optimized,topic_optimized)
 
-    // -> Second Iteration
-    //Detect similar words using entities
-    ReplacementsBuilder.identify(sc, corpus_tagged, w2v_ent, repl_ent)
-
-    // Fix duplicated and invalid replacements
-    ReplacementsBuilder.fix(sc,repl_ent,repl_ent_fix)
-
-    // Fix replacements
-    ReplacementsBuilder.selection(sc,repl_ent_fix,repl_ent_sel)
-
-    // Create a new corpus with these replacements
-    CorpusBuilder.replace(sc,corpus_fixed,repl_ent_sel,corpus_optimized)
-
-    // Identify entities
-    EntityRecognizer.identify(sc,corpus_optimized,entities_optimized)
-
-    // Create a w2v model using this corpus
-    ModelBuilder.createW2V(sc,corpus_optimized,w2v_optimized)
 
   }
 

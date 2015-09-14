@@ -78,4 +78,16 @@ class ReplacementTest extends FunSuite {
     assert(repl.accuracy == 0)
   }
 
+  test("Visualize") {
+    val input1 = List(
+      "11adrid__,__Madrid__,__1.0464544783224043__,__0.8333333134651184__,__0.8492063879966736__,__true__,__8__,__11967",
+      "11adrid__,__Madrid;__,__1.441985232571798__,__0.7142857313156128__,__0.8095238208770752__,__false__,__8__,__74",
+      "11adrid__,__-madrid__,__0.9302441496653959__,__0.7142857313156128__,__0.8095238208770752__,__false__,__8__,__31",
+      "1aadrid__,__11adrid__,__0.6620834541612162__,__0.7714285850524902__,__0.9142857789993286__,__false__,__7__,__8"
+    )
+
+    input1.foreach(x=>println("Accuracy for: " + x + " is: " + new Replacement(x).accuracy))
+
+  }
+
 }

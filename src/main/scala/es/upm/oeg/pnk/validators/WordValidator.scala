@@ -43,6 +43,7 @@ object WordValidator {
   }
 
   def normalize (word: String): String ={
+    if (word.length == 0) return word
     if (word.contains(".")){
       val normalized =  word.split('.').map(normalize(_)).mkString(".")
       if (!word.startsWith(".") && word.endsWith(".")) return normalized + " ."
@@ -50,7 +51,8 @@ object WordValidator {
       return normalized
     }
     var result = word.toLowerCase
-    if ((word.forall(_.isUpper)) || (word.charAt(0).isUpper)) result = result.capitalize
+//    if ((word.forall(_.isUpper)) || (word.charAt(0).isUpper)) result = result.capitalize
+    if (word.charAt(0).isUpper) result = result.capitalize
 
     if (word.endsWith(",") && !word.startsWith(",")) return result.replace(",","") + " ,"
     return result
